@@ -1,0 +1,6 @@
+{
+  "name": "পাঠামারা ইয়ানত সংরক্ষণ",
+  "description": "একটি সম্পূর্ণ বাংলা ভাষার সংগঠন ব্যবস্থাপনা অ্যাপ — সদস্য তথ্য সংরক্ষণ, মাসিক চাঁদা হিসাব, আয়-ব্যয় এবং স্বয়ংক্রিয় রিপোর্ট।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

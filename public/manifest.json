@@ -1,0 +1,37 @@
+{
+  "name": "পাঠামারা ইয়ানত সংরক্ষণ",
+  "short_name": "ইয়ানত",
+  "description": "সংগঠনের সদস্য তথ্য ও মাসিক চাঁদা, আয়-ব্যয় হিসাব সংরক্ষণ অ্যাপ",
+  "theme_color": "#047857",
+  "background_color": "#ffffff",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "./",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

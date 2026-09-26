@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="bn">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>পাঠামারা ইয়ানত সংরক্ষণ</title>
+    <meta name="description" content="একটি সম্পূর্ণ বাংলা ভাষার সংগঠন ব্যবস্থাপনা অ্যাপ — সদস্য তথ্য সংরক্ষণ, মাসিক চাঁদা হিসাব, আয়-ব্যয় এবং স্বয়ংক্রিয় রিপোর্ট।" />
+    <meta property="og:title" content="পাঠামারা ইয়ানত সংরক্ষণ" />
+    <meta property="og:description" content="একটি সম্পূর্ণ বাংলা ভাষার সংগঠন ব্যবস্থাপনা অ্যাপ — সদস্য তথ্য সংরক্ষণ, মাসিক চাঁদা হিসাব, আয়-ব্যয় এবং স্বয়ংক্রিয় রিপোর্ট।" />
+    <meta property="og:type" content="website" />
+    <meta name="theme-color" content="#047857" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="ইয়ানত সংরক্ষণ" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
+    <link rel="icon" type="image/svg+xml" href="./icon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
+    <link rel="manifest" href="./manifest.json" />
+
+    <style>
+      /* Immediate loading splash to prevent mobile Chrome white screen */
+      .app-loader-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        background-color: #f8fafc;
+        font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        text-align: center;
+        padding: 24px;
+        color: #1e293b;
+      }
+      .app-loader-badge {
+        width: 64px;
+        height: 64px;
+        background: linear-gradient(135deg, #047857, #059669);
+        color: #ffffff;
+        font-size: 32px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 20px;
+        box-shadow: 0 10px 25px -5px rgba(4, 120, 87, 0.35);
+        margin-bottom: 20px;
+        animation: pulse 2s infinite;
+      }
+      .app-loader-spinner {
+        width: 28px;
+        height: 28px;
+        border: 3px solid #e2e8f0;
+        border-top-color: #047857;
+        border-radius: 50%;
+        animation: spin 0.8s linear infinite;
+        margin-bottom: 16px;
+      }
+      @keyframes spin {
+        to { transform: rotate(360deg); }
+      }
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+    </style>
+
+    <script>
+      // Clear out any broken service worker registrations immediately in mobile Chrome
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(regs) {
+          for (var i = 0; i < regs.length; i++) {
+            if (regs[i].active && regs[i].active.scriptURL && regs[i].active.scriptURL.indexOf('dev-sw') !== -1) {
+              regs[i].unregister();
+            }
+          }
+        }).catch(function(err) {});
+      }
+    </script>
+  </head>
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white font-['Hind_Siliguri',sans-serif]">
+    <div id="root">
+      <!-- Branded instant loading screen shown before React mounts -->
+      <div class="app-loader-container">
+        <div class="app-loader-badge">পা</div>
+        <div class="app-loader-spinner"></div>
+        <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 6px 0; color: #0f172a;">পাঠামারা ইয়ানত সংরক্ষণ</h2>
+        <p style="font-size: 13px; color: #64748b; margin: 0;">অ্যাপটি লোড হচ্ছে, অনুগ্রহ করে একটু অপেক্ষা করুন...</p>
+      </div>
+    </div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

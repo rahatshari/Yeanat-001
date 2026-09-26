@@ -1,0 +1,87 @@
+name: Build Android APK (অ্যান্ড্রয়েড APK বিল্ডার)
+
+on:
+  push:
+    branches: ['main', 'master']
+  workflow_dispatch:
+    inputs:
+      app_url:
+        description: 'লাইভ PWA বা GitHub Pages URL (খালি রাখলে স্বয়ংক্রিয় ধরবে)'
+        required: false
+        default: ''
+
+jobs:
+  build-android-apk:
+    name: Generate Android APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Project Dependencies
+        run: npm ci || npm install
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Bubblewrap CLI
+        run: npm install -g @bubblewrap/cli
+
+      - name: Prepare Keystore & Config
+        run: |
+          mkdir -p android-build
+          cd android-build
+          
+          # Generate signing key for APK
+          keytool -genkeypair \
+            -dname "CN=Pathamara, OU=App, O=Pathamara, L=Dhaka, ST=Dhaka, C=BD" \
+            -alias pathamara \
+            -keypass 123456 \
+            -keystore android.keystore \
+            -storepass 123456 \
+            -validity 20000 \
+            -keyalg RSA \
+            -keysize 2048
+
+      - name: Generate and Build APK
+        run: |
+          cd android-build
+          TARGET_URL="${{ github.event.inputs.app_url }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+          fi
+          echo "Target App URL: $TARGET_URL"
+
+          # Initialize Bubblewrap project using manifest
+          bubblewrap init --manifest="${TARGET_URL}manifest.json" --skipPwaValidation || true
+
+          # Build APK
+          if [ -f "build.gradle" ] || [ -f "app/build.gradle" ]; then
+            bubblewrap build --signingKeyPath=./android.keystore --signingKeyAlias=pathamara || true
+          fi
+
+      - name: Upload Generated APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Pathamara-Android-APK
+          path: |
+            android-build/*.apk
+            android-build/**/*.apk
+            **/*.apk
+          if-no-files-found: warn
