@@ -13,13 +13,17 @@
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="ইয়ানত সংরক্ষণ" />
+    <!-- Non-blocking Google Fonts loading with system Bengali fallback for instant 0.1s render -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript>
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
+    </noscript>
+
     <link rel="icon" type="image/png" sizes="64x64" href="./favicon.png" />
     <link rel="icon" type="image/svg+xml" href="./icon.svg" />
     <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <link rel="manifest" href="./manifest.json" />
 
     <style>
       /* Immediate loading splash to prevent mobile Chrome white screen */
@@ -30,25 +34,27 @@
         justify-content: center;
         min-height: 100vh;
         background-color: #f8fafc;
-        font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-family: 'Hind Siliguri', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         text-align: center;
         padding: 24px;
         color: #1e293b;
       }
       .app-loader-badge {
-        width: 64px;
-        height: 64px;
-        background: linear-gradient(135deg, #047857, #059669);
-        color: #ffffff;
-        font-size: 32px;
-        font-weight: 700;
+        width: 72px;
+        height: 72px;
+        border-radius: 22px;
+        box-shadow: 0 10px 25px -5px rgba(4, 120, 87, 0.4);
+        margin-bottom: 20px;
+        overflow: hidden;
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 20px;
-        box-shadow: 0 10px 25px -5px rgba(4, 120, 87, 0.35);
-        margin-bottom: 20px;
-        animation: pulse 2s infinite;
+        background: #047857;
+      }
+      .app-loader-badge img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
       .app-loader-spinner {
         width: 28px;
@@ -62,14 +68,15 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
-      @keyframes pulse {
-        0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
-      }
     </style>
 
     <script>
-      // Clear out any broken service worker registrations immediately in mobile Chrome
+      // 1. Ensure trailing slash for GitHub Pages repo URLs so relative paths './' always resolve correctly
+      if (window.location.pathname && !window.location.pathname.endsWith('/') && !window.location.pathname.split('/').pop().includes('.')) {
+        window.history.replaceState(null, '', window.location.pathname + '/' + window.location.search + window.location.hash);
+      }
+
+      // 2. Clear out any broken service worker registrations immediately in mobile Chrome
       if ('serviceWorker' in navigator) {
         navigator.serviceWorker.getRegistrations().then(function(regs) {
           for (var i = 0; i < regs.length; i++) {
@@ -81,16 +88,37 @@
       }
     </script>
   </head>
-  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white font-['Hind_Siliguri',sans-serif]">
+  <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-500 selection:text-white font-['Hind_Siliguri',-apple-system,BlinkMacSystemFont,'Segoe_UI',Roboto,sans-serif]">
     <div id="root">
       <!-- Branded instant loading screen shown before React mounts -->
       <div class="app-loader-container">
-        <div class="app-loader-badge">পা</div>
+        <div class="app-loader-badge">
+          <img src="./pwa-192x192.png" alt="পাঠামারা লোগো" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+          <div style="display: none; width: 100%; height: 100%; color: #ffffff; font-size: 32px; font-weight: bold; align-items: center; justify-content: center; background: #047857;">পা</div>
+        </div>
         <div class="app-loader-spinner"></div>
         <h2 style="font-size: 18px; font-weight: 700; margin: 0 0 6px 0; color: #0f172a;">পাঠামারা ইয়ানত সংরক্ষণ</h2>
-        <p style="font-size: 13px; color: #64748b; margin: 0;">অ্যাপটি লোড হচ্ছে, অনুগ্রহ করে একটু অপেক্ষা করুন...</p>
+        <p id="loader-msg" style="font-size: 13px; color: #64748b; margin: 0;">অ্যাপটি লোড হচ্ছে, অনুগ্রহ করে একটু অপেক্ষা করুন...</p>
+        
+        <!-- Safety fallback button if connection is slow -->
+        <div id="loader-fallback" style="display: none; margin-top: 18px;">
+          <p style="font-size: 12px; color: #b45309; margin-bottom: 8px;">লোড হতে কি দেরি হচ্ছে?</p>
+          <button onclick="if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){for(var i=0;i<r.length;i++){r[i].unregister();}});}window.location.reload(true);" style="padding: 7px 16px; background: #047857; color: white; border: none; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; box-shadow: 0 2px 6px rgba(4,120,87,0.3);">
+            ক্যাশ ক্লিয়ার করে রিলোড দিন
+          </button>
+        </div>
       </div>
     </div>
+
+    <script>
+      // If React does not mount within 3 seconds, show fallback reload button
+      setTimeout(function() {
+        var fallback = document.getElementById('loader-fallback');
+        if (fallback) {
+          fallback.style.display = 'block';
+        }
+      }, 3000);
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -21,9 +21,11 @@ export default defineConfig(({ command }) => {
           'apple-touch-icon.png',
           'pwa-192x192.png',
           'pwa-512x512.png',
+          'pwa-maskable-512x512.png',
           'icon.svg',
         ],
         manifest: {
+          id: isBuild ? './' : '/',
           name: 'পাঠামারা ইয়ানত সংরক্ষণ',
           short_name: 'ইয়ানত',
           description: 'সংগঠনের সদস্য তথ্য ও মাসিক চাঁদা, আয়-ব্যয় হিসাব সংরক্ষণ অ্যাপ',
@@ -47,7 +49,7 @@ export default defineConfig(({ command }) => {
               purpose: 'any',
             },
             {
-              src: 'pwa-512x512.png',
+              src: 'pwa-maskable-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'maskable',
